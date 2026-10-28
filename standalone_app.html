@@ -1,0 +1,2248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>École du Saint Esprit - Application Standalone Complète</title>
+    <style>
+        :root {
+            --primary: #4338ca;
+            --primary-light: #e0e7ff;
+            --primary-dark: #312e81;
+            --secondary: #0284c7;
+            --accent-gold: #d97706;
+            --accent-green: #059669;
+            --accent-red: #dc2626;
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        [data-theme="dark"] {
+            --primary: #6366f1;
+            --primary-light: #1e1b4b;
+            --primary-dark: #4338ca;
+            --bg-main: #090d16;
+            --bg-card: #131b2e;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #1e293b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Top Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-title h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+
+        .header-title p {
+            font-size: 0.75rem;
+            opacity: 0.85;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .btn-icon:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        /* Navigation Tabs */
+        nav.nav-tabs {
+            display: flex;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+            position: sticky;
+            top: 64px;
+            z-index: 90;
+        }
+
+        .nav-tab {
+            flex: 1;
+            min-width: 95px;
+            padding: 10px 12px;
+            border: none;
+            background: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        /* Main Container */
+        main {
+            flex: 1;
+            padding: 16px;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Common Elements */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: var(--shadow);
+            transition: transform 0.15s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.82rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-danger {
+            background: var(--accent-red);
+        }
+
+        .btn-success {
+            background: var(--accent-green);
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 9px 12px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-main);
+            margin-bottom: 10px;
+            font-size: 0.88rem;
+        }
+
+        .filters-row {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+            margin-bottom: 10px;
+        }
+
+        .chip {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .chip.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Formatting Toolbar */
+        .format-toolbar {
+            display: flex;
+            gap: 4px;
+            background: var(--primary-light);
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            overflow-x: auto;
+            align-items: center;
+        }
+
+        .format-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px 7px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .format-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Rendered Markdown Styling */
+        .formatted-body {
+            font-size: 0.88rem;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        .formatted-body h4 {
+            font-size: 0.95rem;
+            color: var(--primary);
+            margin: 6px 0 3px 0;
+        }
+
+        .formatted-body ul {
+            padding-left: 18px;
+            margin: 4px 0;
+        }
+
+        .formatted-body blockquote {
+            border-left: 3px solid var(--primary);
+            padding-left: 8px;
+            margin: 4px 0;
+            font-style: italic;
+            color: var(--text-muted);
+            background: var(--primary-light);
+            border-radius: 0 6px 6px 0;
+        }
+
+        /* Audio Recorder Widget */
+        .audio-recorder-banner {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: var(--radius-lg);
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .audio-recorder-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .recording-pulse {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: red;
+            border-radius: 50%;
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.3; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1.1); }
+        }
+
+        .waveform-canvas {
+            width: 100%;
+            height: 36px;
+            background: #fee2e2;
+            border-radius: 6px;
+        }
+
+        .audio-player-box {
+            background: var(--primary-light);
+            border-radius: var(--radius-md);
+            padding: 8px 10px;
+            margin: 6px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .audio-player-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .audio-player-controls audio {
+            width: 100%;
+            height: 32px;
+        }
+
+        .speed-buttons {
+            display: flex;
+            gap: 3px;
+            align-items: center;
+            font-size: 0.72rem;
+        }
+
+        .speed-btn {
+            padding: 2px 5px;
+            border-radius: 4px;
+            background: white;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Two-Way Journal Specific */
+        .two-way-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+            margin: 8px 0;
+        }
+
+        @media (min-width: 650px) {
+            .two-way-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .two-way-box {
+            padding: 10px;
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+            line-height: 1.45;
+        }
+
+        .two-way-prayer {
+            background: #f1f5f9;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .two-way-god {
+            background: #fef3c7;
+            border-left: 4px solid var(--accent-gold);
+            color: #78350f;
+            font-style: italic;
+        }
+
+        .mood-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 7px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        /* E-Book Reader */
+        .reader-container {
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            background: var(--bg-card);
+            margin-top: 10px;
+        }
+
+        .reader-toolbar {
+            padding: 8px 12px;
+            background: var(--bg-main);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .reader-content {
+            padding: 20px;
+            min-height: 300px;
+            line-height: 1.6;
+            overflow-y: auto;
+            max-height: 500px;
+        }
+
+        .reader-theme-sepia {
+            background-color: #fbf0d9 !important;
+            color: #433422 !important;
+        }
+
+        .reader-theme-dark {
+            background-color: #0f172a !important;
+            color: #f1f5f9 !important;
+        }
+
+        /* Modal Dialog */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-dialog {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 18px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin-bottom: 3px;
+            color: var(--text-muted);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 11px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: var(--bg-main);
+            color: var(--text-main);
+            font-size: 0.85rem;
+        }
+
+        textarea.form-control {
+            min-height: 75px;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="header-title">
+            <span style="font-size: 1.5rem;">🕊️</span>
+            <div>
+                <h1>École du Saint Esprit</h1>
+                <p>Application Standalone Pro • Audio, Prières & Études</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn-icon" id="toggleThemeBtn" title="Changer de thème">🌓</button>
+            <button class="btn-icon" id="exportDataBtn" title="Exporter données (JSON)">💾</button>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+        <button class="nav-tab active" data-tab="tab-sermons">
+            <span>🎙️ Sermons</span>
+            <span>Notes & Audio</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-journal">
+            <span>🕊️ Two-Way</span>
+            <span>Journal & Humeurs</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-prayers">
+            <span>🙏 Prières</span>
+            <span>Catégorisées</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-library">
+            <span>📚 Études</span>
+            <span>EPUB, PDF & Médias</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-plans">
+            <span>📖 Plans</span>
+            <span>Personnalisables</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-bible">
+            <span>📜 Bible</span>
+            <span>Malagasy & Semeur</span>
+        </button>
+    </nav>
+
+    <main>
+        <!-- ============================================== -->
+        <!-- TAB 1: SERMON NOTES & AUDIO RECORDING -->
+        <!-- ============================================== -->
+        <section id="tab-sermons" class="tab-content active">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2 style="font-size: 1.15rem; font-weight: 700;">Notes de Sermon avec Enregistrement Audio</h2>
+                <button class="btn" id="openNewSermonModalBtn">+ Nouvelle Note</button>
+            </div>
+
+            <!-- Live Recorder Banner -->
+            <div class="audio-recorder-banner" id="audioRecorderWidget">
+                <div class="audio-recorder-top">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="recording-pulse" id="recordDot"></span>
+                        <strong id="recordStatusText" style="color: #991b1b; font-size: 0.88rem;">Prêt à enregistrer</strong>
+                    </div>
+                    <span id="recordTimer" style="font-size: 1.05rem; font-weight: 800; color: #991b1b;">00:00</span>
+                </div>
+                <canvas class="waveform-canvas" id="waveformCanvas"></canvas>
+                <div style="display: flex; gap: 6px; justify-content: flex-end;">
+                    <button class="btn btn-danger" id="startRecordBtn">🎙️ Démarrer Micro</button>
+                    <button class="btn btn-outline" id="pauseRecordBtn" style="display: none;">⏸️ Pause</button>
+                    <button class="btn btn-success" id="stopRecordBtn" style="display: none;">⏹️ Enregistrer & Lier</button>
+                    <button class="btn btn-outline" id="cancelRecordBtn" style="display: none;">Annuler</button>
+                </div>
+            </div>
+
+            <!-- Search and Category Filters -->
+            <input type="text" class="search-bar" id="searchSermonsInput" placeholder="Rechercher par titre, prédicateur, verset, catégorie...">
+            
+            <div class="filters-row" id="sermonCategoryFilters">
+                <span class="chip active" data-cat="TOUS">Toutes les catégories</span>
+                <span class="chip" data-cat="Culte Dominical">Culte Dominical</span>
+                <span class="chip" data-cat="Étude Biblique">Étude Biblique</span>
+                <span class="chip" data-cat="Conférence">Conférence</span>
+                <span class="chip" data-cat="Réveil Spirituel">Réveil Spirituel</span>
+                <span class="chip" data-cat="Pneumatologie">Pneumatologie</span>
+                <span class="chip" data-cat="AUDIO_ONLY">🎙️ Avec Audio</span>
+            </div>
+
+            <div id="sermonsList"></div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- TAB 2: TWO-WAY JOURNALING (HUMEURS & PERCÉES) -->
+        <!-- ============================================== -->
+        <section id="tab-journal" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div>
+                    <h2 style="font-size: 1.15rem; font-weight: 700;">Two-Way Journaling (Dialogue avec Dieu)</h2>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Habacuc 2:1-2 • Ma voix ⇄ Ce que le Saint-Esprit me répond</p>
+                </div>
+                <button class="btn" id="openNewJournalModalBtn">+ Nouveau Dialogue</button>
+            </div>
+
+            <input type="text" class="search-bar" id="searchJournalInput" placeholder="Rechercher dans mes prières, réponses divines, promesses...">
+            
+            <div class="filters-row" id="journalMoodFilters">
+                <span class="chip active" data-mood="TOUS">Toutes Humeurs</span>
+                <span class="chip" data-mood="PERCEE">✨ Percées Confirmées</span>
+                <span class="chip" data-mood="ZELE">🔥 Zélé</span>
+                <span class="chip" data-mood="RECONNAISSANCE">🙏 Reconnaissant</span>
+                <span class="chip" data-mood="PAIX">🕊️ Paix (Shalom)</span>
+                <span class="chip" data-mood="COMBAT">⚡ Combat</span>
+                <span class="chip" data-mood="ATTENTE">⏳ En Attente</span>
+                <span class="chip" data-mood="EPROUVE">💧 Éprouvé</span>
+                <span class="chip" data-mood="REVELATION">💡 Révélation</span>
+            </div>
+
+            <div id="journalList"></div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- TAB 3: LISTE DE PRIÈRES CATÉGORISÉE (NOUVEAU) -->
+        <!-- ============================================== -->
+        <section id="tab-prayers" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div>
+                    <h2 style="font-size: 1.15rem; font-weight: 700;">Liste de Prières & Requêtes</h2>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Intercession catégorisée • Compteur de prières & Suivi des exaucements</p>
+                </div>
+                <button class="btn" id="openNewPrayerModalBtn">+ Nouvelle Requête</button>
+            </div>
+
+            <input type="text" class="search-bar" id="searchPrayersInput" placeholder="Rechercher une requête de prière, un proche, une catégorie...">
+            
+            <div class="filters-row" id="prayerCategoryFilters">
+                <span class="chip active" data-pcat="TOUS">Toutes Catégories</span>
+                <span class="chip" data-pcat="Famille & Foyer">👨‍👩‍👧 Famille & Foyer</span>
+                <span class="chip" data-pcat="Santé & Guérison">🩺 Santé & Guérison</span>
+                <span class="chip" data-pcat="Salut des Âmes">🕊️ Salut des Âmes</span>
+                <span class="chip" data-pcat="Combat Spirituel">⚡ Combat Spirituel</span>
+                <span class="chip" data-pcat="Ministère & Église">⛪ Ministère & Église</span>
+                <span class="chip" data-pcat="Finances & Emploi">💼 Finances & Emploi</span>
+                <span class="chip" data-pcat="Nation & Autorités">🌍 Nation & Autorités</span>
+            </div>
+
+            <div class="filters-row" id="prayerStatusFilters">
+                <span class="chip active" data-status="TOUS">Tous les statuts</span>
+                <span class="chip" data-status="EN_ATTENTE">⏳ En attente</span>
+                <span class="chip" data-status="EXAUCEES">✨ Exaucées (Miracles)</span>
+            </div>
+
+            <div id="prayersList"></div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- TAB 4: LECTEUR EPUB/PDF & RESSOURCES MÉDIAS (NOUVEAU) -->
+        <!-- ============================================== -->
+        <section id="tab-library" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div>
+                    <h2 style="font-size: 1.15rem; font-weight: 700;">Ressources d'Étude Théologique</h2>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Lecteur EPUB/PDF, documents d'étude et enseignements vidéo/audio</p>
+                </div>
+                <div style="display: flex; gap: 6px;">
+                    <label class="btn btn-outline" style="cursor: pointer; font-size: 0.75rem;">
+                        📂 Importer PDF / EPUB
+                        <input type="file" id="localDocumentPicker" accept=".pdf,.epub,.txt" style="display: none;">
+                    </label>
+                    <button class="btn" id="openNewMediaModalBtn">+ Média</button>
+                </div>
+            </div>
+
+            <!-- Subtabs: E-Book Reader vs Teaching Media -->
+            <div class="filters-row" id="librarySubTabs">
+                <span class="chip active" data-libtab="reader">📄 Lecteur EPUB & PDF</span>
+                <span class="chip" data-libtab="media">🎥 Vidéos & Audios d'Enseignement</span>
+            </div>
+
+            <!-- Sub-section 1: EPUB / PDF Reader -->
+            <div id="libraryReaderSection">
+                <div class="filters-row" id="ebookSelectorChips"></div>
+
+                <div class="reader-container" id="readerContainer">
+                    <div class="reader-toolbar">
+                        <div style="display: flex; gap: 4px; align-items: center;">
+                            <button class="format-btn" id="readerThemeLight">Clair</button>
+                            <button class="format-btn" id="readerThemeSepia">Sépia</button>
+                            <button class="format-btn" id="readerThemeDark">Nuit</button>
+                        </div>
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            <button class="format-btn" id="readerFontDec">A-</button>
+                            <span id="readerFontSizeLabel" style="font-size: 0.75rem; font-weight: bold;">15 pt</span>
+                            <button class="format-btn" id="readerFontInc">A+</button>
+                        </div>
+                    </div>
+                    <div class="reader-content" id="readerContentArea"></div>
+                    <div style="padding: 10px 14px; background: var(--bg-main); border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                        <button class="btn btn-outline" id="readerPrevBtn">◀ Précédent</button>
+                        <span id="readerChapterIndicator" style="font-size: 0.8rem; font-weight: bold;">Chapitre 1 / 2</span>
+                        <button class="btn btn-outline" id="readerNextBtn">Suivant ▶</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sub-section 2: Teaching Media Videos & Audios -->
+            <div id="libraryMediaSection" style="display: none;">
+                <div class="filters-row" id="mediaTypeChips">
+                    <span class="chip active" data-mtype="TOUS">Tous les Médias</span>
+                    <span class="chip" data-mtype="VIDEO">🎬 Vidéos HD</span>
+                    <span class="chip" data-mtype="AUDIO">🎙️ Podcasts Audio</span>
+                </div>
+                <div id="teachingMediaList"></div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- TAB 5: CUSTOMIZABLE READING PLANS -->
+        <!-- ============================================== -->
+        <section id="tab-plans" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div>
+                    <h2 style="font-size: 1.15rem; font-weight: 700;">Plans de Lecture de la Parole</h2>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">100% Personnalisables • Parcours sur mesure de 3 à 30 jours</p>
+                </div>
+                <button class="btn" id="openNewPlanModalBtn">+ Créer un Plan</button>
+            </div>
+
+            <div class="filters-row" id="planCategoryFilters">
+                <span class="chip active" data-pcat="TOUS">Tous les plans</span>
+                <span class="chip" data-pcat="MES_PLANS">✨ Mes Plans Personnalisés</span>
+                <span class="chip" data-pcat="Pneumatologie">Pneumatologie</span>
+                <span class="chip" data-pcat="Chronologique">Chronologique</span>
+                <span class="chip" data-pcat="Foi">Foi & Victoire</span>
+            </div>
+
+            <div id="plansList"></div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- TAB 6: BIBLE READER -->
+        <!-- ============================================== -->
+        <section id="tab-bible" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2 style="font-size: 1.15rem; font-weight: 700;">Sainte Bible Multi-versions</h2>
+                <div style="display: flex; gap: 6px;">
+                    <select id="bibleBookSelect" class="form-control" style="width: auto; padding: 6px 10px;"></select>
+                    <select id="bibleChapterSelect" class="form-control" style="width: auto; padding: 6px 10px;"></select>
+                    <button class="btn btn-outline" id="toggleParallelBibleBtn">Scission Parallèle</button>
+                </div>
+            </div>
+
+            <div id="bibleVersesContainer"></div>
+        </section>
+    </main>
+
+    <!-- Modal: New/Edit Sermon -->
+    <div class="modal-overlay" id="sermonModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 id="sermonModalTitle">Note de Sermon</h3>
+                <button class="btn-icon" style="background: none; color: var(--text-main);" onclick="closeModals()">✕</button>
+            </div>
+            <form id="sermonForm">
+                <input type="hidden" id="sermonId">
+                <div class="form-group">
+                    <label>Titre du Message *</label>
+                    <input type="text" id="sermonTitle" class="form-control" required placeholder="Ex: La Puissance du Saint-Esprit">
+                </div>
+                <div class="form-group">
+                    <label>Prédicateur</label>
+                    <input type="text" id="sermonPreacher" class="form-control" placeholder="Ex: Pasteur David">
+                </div>
+                <div class="form-group">
+                    <label>Catégorie (Personnalisable)</label>
+                    <input type="text" id="sermonCategory" class="form-control" placeholder="Ex: Culte Dominical, Réveil, Étude...">
+                </div>
+                <div class="form-group">
+                    <label>Passage Biblique de Base</label>
+                    <input type="text" id="sermonScripture" class="form-control" placeholder="Ex: Jean 14:16-26">
+                </div>
+                <div class="form-group">
+                    <label>Notes Détaillées *</label>
+                    <div class="format-toolbar">
+                        <button type="button" class="format-btn" onclick="insertFormat('sermonContent', 'bold')">B</button>
+                        <button type="button" class="format-btn" onclick="insertFormat('sermonContent', 'italic')">I</button>
+                        <button type="button" class="format-btn" onclick="insertFormat('sermonContent', 'heading')">H</button>
+                        <button type="button" class="format-btn" onclick="insertFormat('sermonContent', 'bullet')">• Puce</button>
+                        <button type="button" class="format-btn" onclick="insertFormat('sermonContent', 'quote')">❝ Citation</button>
+                        <button type="button" class="format-btn" onclick="insertFormat('sermonContent', 'cross')">✝ Foi</button>
+                    </div>
+                    <textarea id="sermonContent" class="form-control" required placeholder="Points clés, révélations partagées..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Ce que l'Esprit m'a dit / Application Personnelle</label>
+                    <div class="format-toolbar">
+                        <button type="button" class="format-btn" onclick="insertFormat('sermonTakeaways', 'bold')">B</button>
+                        <button type="button" class="format-btn" onclick="insertFormat('sermonTakeaways', 'bullet')">• Puce</button>
+                        <button type="button" class="format-btn" onclick="insertFormat('sermonTakeaways', 'star')">✨ Action</button>
+                    </div>
+                    <textarea id="sermonTakeaways" class="form-control" placeholder="Application pratique dans ma vie de disciple..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Tags (séparés par virgule)</label>
+                    <input type="text" id="sermonTags" class="form-control" placeholder="SaintEsprit, Foi, Onction">
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+                    <button type="button" class="btn btn-outline" onclick="closeModals()">Annuler</button>
+                    <button type="submit" class="btn">Enregistrer la Note</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: New/Edit Two-Way Journal Entry -->
+    <div class="modal-overlay" id="journalModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>Nouveau Two-Way Journaling</h3>
+                <button class="btn-icon" style="background: none; color: var(--text-main);" onclick="closeModals()">✕</button>
+            </div>
+            <form id="journalForm">
+                <div class="form-group">
+                    <label>Titre du Dialogue *</label>
+                    <input type="text" id="journalTitle" class="form-control" required placeholder="Ex: Paix dans la tempête matinale">
+                </div>
+                <div style="grid-template-columns: 1fr 1fr; gap: 8px; display: grid;">
+                    <div class="form-group">
+                        <label>Humeur Spirituelle *</label>
+                        <select id="journalMood" class="form-control">
+                            <option value="PAIX">🕊️ Paix (Shalom)</option>
+                            <option value="ZELE">🔥 Zélé & Enflammé</option>
+                            <option value="RECONNAISSANCE">🙏 Reconnaissant</option>
+                            <option value="COMBAT">⚡ Combat & Victoire</option>
+                            <option value="ATTENTE">⏳ En Attente & Foi</option>
+                            <option value="EPROUVE">💧 Éprouvé & Consolateur</option>
+                            <option value="REVELATION">💡 Révélation & Clarté</option>
+                            <option value="AMOUR">💖 Amour & Intimité</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Intensité (1 à 5)</label>
+                        <input type="range" id="journalIntensity" min="1" max="5" value="5" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Catégorie (Personnalisable)</label>
+                    <input type="text" id="journalCategory" class="form-control" placeholder="Ex: Intimité & Adoration, Direction, Combat...">
+                </div>
+                <div class="form-group">
+                    <label>Verset Biblique d'Ancrage</label>
+                    <input type="text" id="journalScripture" class="form-control" placeholder="Ex: Jean 14:27; Romains 8:28">
+                </div>
+                <div class="form-group">
+                    <label>🙋‍♂️ Ma Voix / Ce que je dépose devant Dieu *</label>
+                    <div class="format-toolbar">
+                        <button type="button" class="format-btn" onclick="insertFormat('journalMyPrayer', 'bold')">B</button>
+                        <button type="button" class="format-btn" onclick="insertFormat('journalMyPrayer', 'italic')">I</button>
+                        <button type="button" class="format-btn" onclick="insertFormat('journalMyPrayer', 'bullet')">• Puce</button>
+                        <button type="button" class="format-btn" onclick="insertFormat('journalMyPrayer', 'quote')">❝ Verset</button>
+                    </div>
+                    <textarea id="journalMyPrayer" class="form-control" required placeholder="Exprimez librement vos sentiments, questions, fardeaux..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>🕊️ La Voix du Saint-Esprit / Ce que Dieu me répond *</label>
+                    <div class="format-toolbar">
+                        <button type="button" class="format-btn" onclick="insertFormat('journalGodsResponse', 'bold')">B</button>
+                        <button type="button" class="format-btn" onclick="insertFormat('journalGodsResponse', 'italic')">I</button>
+                        <button type="button" class="format-btn" onclick="insertFormat('journalGodsResponse', 'bullet')">• Puce</button>
+                        <button type="button" class="format-btn" onclick="insertFormat('journalGodsResponse', 'cross')">✝ Promesse</button>
+                    </div>
+                    <textarea id="journalGodsResponse" class="form-control" required placeholder="Notez les versets, impressions saintes, paix reçue..."></textarea>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+                    <button type="button" class="btn btn-outline" onclick="closeModals()">Annuler</button>
+                    <button type="submit" class="btn">Enregistrer le Dialogue</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: New Prayer Request (Categorized) -->
+    <div class="modal-overlay" id="prayerModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>Nouveau Sujet de Prière & Intercession</h3>
+                <button class="btn-icon" style="background: none; color: var(--text-main);" onclick="closeModals()">✕</button>
+            </div>
+            <form id="prayerForm">
+                <div class="form-group">
+                    <label>Sujet de la Prière *</label>
+                    <input type="text" id="prayerTitle" class="form-control" required placeholder="Ex: Restauration de la santé de Maman">
+                </div>
+                <div class="form-group">
+                    <label>Catégorie *</label>
+                    <select id="prayerCategory" class="form-control">
+                        <option value="Famille & Foyer">👨‍👩‍👧 Famille & Foyer</option>
+                        <option value="Santé & Guérison">🩺 Santé & Guérison</option>
+                        <option value="Salut des Âmes">🕊️ Salut des Âmes</option>
+                        <option value="Combat Spirituel">⚡ Combat Spirituel</option>
+                        <option value="Ministère & Église">⛪ Ministère & Église</option>
+                        <option value="Finances & Emploi">💼 Finances & Emploi</option>
+                        <option value="Nation & Autorités">🌍 Nation & Autorités</option>
+                        <option value="Intercession Libre">🌟 Intercession Libre</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Détails de la Requête & Promesses d'Appui *</label>
+                    <div class="format-toolbar">
+                        <button type="button" class="format-btn" onclick="insertFormat('prayerDetails', 'bold')">B</button>
+                        <button type="button" class="format-btn" onclick="insertFormat('prayerDetails', 'italic')">I</button>
+                        <button type="button" class="format-btn" onclick="insertFormat('prayerDetails', 'bullet')">• Puce</button>
+                        <button type="button" class="format-btn" onclick="insertFormat('prayerDetails', 'quote')">❝ Verset</button>
+                    </div>
+                    <textarea id="prayerDetails" class="form-control" required placeholder="Décrivez le besoin d'intercession et les versets de foi proclamés..."></textarea>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+                    <button type="button" class="btn btn-outline" onclick="closeModals()">Annuler</button>
+                    <button type="submit" class="btn">Enregistrer la Requête</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Mark Prayer as Answered (Témoignage) -->
+    <div class="modal-overlay" id="prayerAnswerModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>Gloire à Dieu ! Confirmer l'Exaucement ✨</h3>
+                <button class="btn-icon" style="background: none; color: var(--text-main);" onclick="closeModals()">✕</button>
+            </div>
+            <form id="prayerAnswerForm">
+                <input type="hidden" id="answerPrayerId">
+                <div class="form-group">
+                    <label id="answerPrayerLabel" style="font-weight: 700; color: var(--primary); font-size: 0.9rem;"></label>
+                </div>
+                <div class="form-group">
+                    <label>Récit du Miracle / Témoignage d'Exaucement *</label>
+                    <div class="format-toolbar">
+                        <button type="button" class="format-btn" onclick="insertFormat('prayerTestimony', 'bold')">B</button>
+                        <button type="button" class="format-btn" onclick="insertFormat('prayerTestimony', 'bullet')">• Puce</button>
+                        <button type="button" class="format-btn" onclick="insertFormat('prayerTestimony', 'star')">✨ Miracle</button>
+                    </div>
+                    <textarea id="prayerTestimony" class="form-control" required placeholder="Comment Dieu a-t-Il répondu ? Racontez la grâce reçue..."></textarea>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+                    <button type="button" class="btn btn-outline" onclick="closeModals()">Annuler</button>
+                    <button type="submit" class="btn btn-success">Valider l'Exaucement</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Add Teaching Media (Video/Audio) -->
+    <div class="modal-overlay" id="mediaModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>Ajouter une Ressource Vidéo ou Audio</h3>
+                <button class="btn-icon" style="background: none; color: var(--text-main);" onclick="closeModals()">✕</button>
+            </div>
+            <form id="mediaForm">
+                <div class="form-group">
+                    <label>Titre de l'Enseignement *</label>
+                    <input type="text" id="mediaTitle" class="form-control" required placeholder="Ex: L'Onction du Saint-Esprit">
+                </div>
+                <div class="form-group">
+                    <label>Enseignant / Prédicateur</label>
+                    <input type="text" id="mediaTeacher" class="form-control" placeholder="Ex: Pasteur Samuel">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div class="form-group">
+                        <label>Format Média</label>
+                        <select id="mediaType" class="form-control">
+                            <option value="VIDEO">🎬 Vidéo (YouTube / MP4)</option>
+                            <option value="AUDIO">🎙️ Audio (Podcast / MP3)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Durée (ex: 45 min)</label>
+                        <input type="text" id="mediaDuration" class="form-control" value="35 min">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Lien URL (YouTube, Vimeo, MP3, etc.) *</label>
+                    <input type="url" id="mediaUrl" class="form-control" required placeholder="https://www.youtube.com/watch?v=...">
+                </div>
+                <div class="form-group">
+                    <label>Catégorie</label>
+                    <input type="text" id="mediaCategory" class="form-control" value="Pneumatologie">
+                </div>
+                <div class="form-group">
+                    <label>Description & Points d'édification</label>
+                    <div class="format-toolbar">
+                        <button type="button" class="format-btn" onclick="insertFormat('mediaDesc', 'bold')">B</button>
+                        <button type="button" class="format-btn" onclick="insertFormat('mediaDesc', 'bullet')">• Puce</button>
+                    </div>
+                    <textarea id="mediaDesc" class="form-control" placeholder="Résumé des thèmes abordés..."></textarea>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+                    <button type="button" class="btn btn-outline" onclick="closeModals()">Annuler</button>
+                    <button type="submit" class="btn">Ajouter la Ressource</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Create Custom Reading Plan -->
+    <div class="modal-overlay" id="planModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>Créer un Plan de Lecture Personnalisé</h3>
+                <button class="btn-icon" style="background: none; color: var(--text-main);" onclick="closeModals()">✕</button>
+            </div>
+            <form id="planForm">
+                <div class="form-group">
+                    <label>Titre du Plan *</label>
+                    <input type="text" id="planTitle" class="form-control" required placeholder="Ex: 7 Jours dans la Présence de l'Esprit">
+                </div>
+                <div class="form-group">
+                    <label>Catégorie Personnalisée *</label>
+                    <input type="text" id="planCategory" class="form-control" required placeholder="Ex: Pneumatologie, Méditation, Réveil">
+                </div>
+                <div class="form-group">
+                    <label>Description du Parcours</label>
+                    <textarea id="planDesc" class="form-control" placeholder="Objectif spirituel et directives de méditation..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Nombre de Jours</label>
+                    <select id="planDaysSelect" class="form-control">
+                        <option value="3">3 Jours</option>
+                        <option value="7" selected>7 Jours (1 Semaine)</option>
+                        <option value="14">14 Jours (2 Semaines)</option>
+                        <option value="21">21 Jours (Consécration)</option>
+                        <option value="30">30 Jours (1 Mois)</option>
+                    </select>
+                </div>
+                <div id="planDaysFieldsContainer" style="display: flex; flex-direction: column; gap: 6px; max-height: 250px; overflow-y: auto; padding: 4px;"></div>
+                <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+                    <button type="button" class="btn btn-outline" onclick="closeModals()">Annuler</button>
+                    <button type="submit" class="btn">Valider & Créer le Plan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data Stores
+        let sermons = JSON.parse(localStorage.getItem('es_sermons') || '[]');
+        let journal = JSON.parse(localStorage.getItem('es_journal') || '[]');
+        let prayers = JSON.parse(localStorage.getItem('es_prayers') || '[]');
+        let customPlans = JSON.parse(localStorage.getItem('es_custom_plans') || '[]');
+        let completedDays = JSON.parse(localStorage.getItem('es_completed_days') || '[]');
+        let teachingMedia = JSON.parse(localStorage.getItem('es_teaching_media') || '[]');
+
+        // Seed initial data if empty
+        if (sermons.length === 0) {
+            sermons = [
+                {
+                    id: 1,
+                    title: "Marcher par l'Esprit et Non par la Chair",
+                    preacher: "Pasteur Christian",
+                    category: "Culte Dominical",
+                    scriptureRef: "Galates 5:16-25",
+                    content: "Quand nous marchons selon l'Esprit, nous manifestons Son fruit surnaturel.\n\n• **L'amour divin** remplace l'égoïsme.\n• **La paix profonde** surmonte toute anxiété.\n• **La foi ferme** renverse les doutes.",
+                    keyTakeaways: "Prendre 15 minutes chaque matin dans le silence avec le Paraclet.",
+                    tags: "SaintEsprit, Sanctification, Fruit",
+                    dateMillis: Date.now() - 86400000 * 2,
+                    audioBlobUrl: null,
+                    audioDuration: 0
+                }
+            ];
+            localStorage.setItem('es_sermons', JSON.stringify(sermons));
+        }
+
+        if (journal.length === 0) {
+            journal = [
+                {
+                    id: 1,
+                    title: "Dialogue matinal : Paix dans la tempête",
+                    mood: "PAIX",
+                    moodIntensity: 5,
+                    category: "Intimité & Adoration",
+                    scriptureAnchor: "Jean 14:27; Zacharie 4:6",
+                    myPrayer: "Seigneur, mon cœur était troublé face aux défis. Je dépose tout à Tes pieds.",
+                    godsResponse: "Mon enfant, Je suis ton Berger. Reste tranquille dans Ma présence, car ce n'est ni par la force humaine, mais par Mon Esprit. Ma paix te garde.",
+                    isBreakthrough: true,
+                    dateMillis: Date.now() - 86400000 * 1
+                }
+            ];
+            localStorage.setItem('es_journal', JSON.stringify(journal));
+        }
+
+        if (prayers.length === 0) {
+            prayers = [
+                {
+                    id: 1,
+                    title: "Restauration complète de santé pour Maman",
+                    category: "Santé & Guérison",
+                    requestDetails: "Proclamation de guérison divine selon Ésaïe 53:5. Prière pour ses poumons et sa vitalité physique.",
+                    isAnswered: true,
+                    answeredDateMillis: Date.now() - 86400000 * 3,
+                    testimony: "Miracle confirmé ! Les radios montrent une guérison complète et les médecins sont émerveillés !",
+                    prayerCount: 14,
+                    dateMillis: Date.now() - 86400000 * 7
+                },
+                {
+                    id: 2,
+                    title: "Réveil spirituel dans notre église et jeunesse",
+                    category: "Ministère & Église",
+                    requestDetails: "Effusion du Saint-Esprit sur nos jeunes disciples, repentance sincère et zèle pour l'évangélisation.",
+                    isAnswered: false,
+                    answeredDateMillis: null,
+                    testimony: "",
+                    prayerCount: 22,
+                    dateMillis: Date.now() - 86400000 * 5
+                },
+                {
+                    id: 3,
+                    title: "Sagesse divine pour nouvelle orientation professionnelle",
+                    category: "Finances & Emploi",
+                    requestDetails: "Demande de discernement spirituel pour accepter l'offre d'emploi alignée avec le plan de Dieu.",
+                    isAnswered: false,
+                    answeredDateMillis: null,
+                    testimony: "",
+                    prayerCount: 9,
+                    dateMillis: Date.now() - 86400000 * 2
+                }
+            ];
+            localStorage.setItem('es_prayers', JSON.stringify(prayers));
+        }
+
+        if (teachingMedia.length === 0) {
+            teachingMedia = [
+                {
+                    id: "m_1",
+                    title: "L'Intimité Quotidienne avec le Paraclet",
+                    teacher: "Pasteur David Wilkerson",
+                    mediaType: "VIDEO",
+                    mediaUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                    category: "Pneumatologie",
+                    durationText: "45 min",
+                    description: "Enseignement fondamental sur la communion secrète avec l'Esprit Saint et comment développer une écoute attentive."
+                },
+                {
+                    id: "m_2",
+                    title: "L'Opération des 9 Dons Spirituels",
+                    teacher: "Dr. Derek Prince",
+                    mediaType: "VIDEO",
+                    mediaUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                    category: "Dons & Onction",
+                    durationText: "58 min",
+                    description: "Étude verset par verset de 1 Corinthiens 12 pour édifier le corps de Christ dans la puissance de Dieu."
+                },
+                {
+                    id: "m_3",
+                    title: "Podcast : Marcher par l'Esprit au Quotidien",
+                    teacher: "École du Saint Esprit",
+                    mediaType: "AUDIO",
+                    mediaUrl: "https://example.com/podcast.mp3",
+                    category: "Sanctification",
+                    durationText: "28 min",
+                    description: "Méditation audio sur la victoire sur la chair par la plénitude de l'Esprit de Vie (Romains 8)."
+                }
+            ];
+            localStorage.setItem('es_teaching_media', JSON.stringify(teachingMedia));
+        }
+
+        // Bundled Study E-Books
+        const studyEBooks = [
+            {
+                id: "eb_torrey",
+                title: "La Personne & L'Œuvre du Saint-Esprit",
+                author: "R.A. Torrey",
+                format: "EPUB",
+                category: "Pneumatologie",
+                chapters: [
+                    {
+                        title: "Chapitre 1 : La Personnalité du Saint-Esprit",
+                        content: `### Qui est le Saint-Esprit ?\nLe Saint-Esprit n'est pas une simple force impersonnelle. **Le Saint-Esprit est une Personne divine**.\n\n• **Il a une intelligence** : Romains 8:27.\n• **Il a une volonté souveraine** : 1 Corinthiens 12:11.\n• **Il aime de tout Son être** : Romains 15:30.\n\n> « N'attristez pas le Saint-Esprit de Dieu par lequel vous avez été scellés. » (Éphésiens 4:30)\n\n✝ Traitez-Le avec honneur et communion chaque matin.`
+                    },
+                    {
+                        title: "Chapitre 2 : Le Baptême du Saint-Esprit",
+                        content: `### La Promesse du Père\nLe baptême dans l'Esprit revêt le croyant de **puissance pour être témoin** (Actes 1:8).\n\n1. Se repentir et croire en Jésus.\n2. Demander au Père avec assurance d'enfant.\n3. Recevoir par la foi et louer Dieu dans l'Esprit.`
+                    }
+                ]
+            },
+            {
+                id: "eb_wigglesworth",
+                title: "Vivre par la Foi & les Dons Spirituels",
+                author: "Smith Wigglesworth",
+                format: "PDF",
+                category: "Foi & Miracles",
+                chapters: [
+                    {
+                        title: "Section 1 : La Foi Inébranlable dans la Parole",
+                        content: `### Croire Seulement !\nLa foi n'est pas une émotion passagère ; la foi est une **décision ferme d'agir** sur la Parole de Dieu.\n\n> « Ne crains point, crois seulement ! » (Marc 5:36)\n\n• La foi vient de la Parole entendue.\n• L'obéissance immédiate libère la gloire de Dieu.`
+                    },
+                    {
+                        title: "Section 2 : Les Dons de Guérisons & Miracles",
+                        content: `### Jésus Guérit Encore\nJésus-Christ est le même hier, aujourd'hui et éternellement (Hébreux 13:8).\n\n• Le moteur du miracle est la **compassion divine** (Agapē).\n• C'est l'autorité souveraine du Nom de Jésus qui brise les chaînes.`
+                    }
+                ]
+            }
+        ];
+
+        // Bible Sample Verses
+        const bibleVerses = [
+            { book: "Jean", chapter: 14, verse: 16, mg: "Ary Izaho hangataka amin'ny Ray, ary Izy hanome anareo Mpananatra hafa, mba ho eo aminareo mandrakizay,", fr: "Et moi, je prierai le Père, et il vous donnera un autre Consolateur (Paraclet), afin qu'il demeure éternellement avec vous," },
+            { book: "Jean", chapter: 14, verse: 26, mg: "Fa ny Mpananatra, dia ny Fanahy Masina, Izay hirahin'ny Ray amin'ny anarako, Izy no hampianatra anareo ny zavatra rehetra sy hampiray ny sainareo amin'izay rehetra nolazaiko taminareo.", fr: "Mais le Consolateur, l'Esprit Saint, que le Père enverra en mon nom, vous enseignera toutes choses, et vous rappellera tout ce que je vous ai dit." },
+            { book: "Jean", chapter: 14, verse: 27, mg: "Fiadanana no avelako ho anareo, ny fiadanako no omeko anareo; tsy tahaka ny fanomen'izao tontolo izao no fanomeko anareo.", fr: "Je vous laisse la paix, je vous donne ma paix. Je ne vous donne pas comme le monde donne." },
+            { book: "Actes", chapter: 1, verse: 8, mg: "Fa hahazo hery ianareo amin'ny fiavian'ny Fanahy Masina aminareo, ary ho vavolombeloko...", fr: "Mais vous recevrez une puissance, le Saint-Esprit survenant sur vous, et vous serez mes témoins..." },
+            { book: "Romains", chapter: 8, verse: 14, mg: "Fa izay rehetra tarihin'ny Fanahin'Andriamanitra no zanak'Andriamanitra.", fr: "Car tous ceux qui sont conduits par l'Esprit de Dieu sont fils de Dieu." },
+            { book: "Romains", chapter: 8, verse: 26, mg: "Ary toy izany koa, ny Fanahy no manampy ny fahalementsika...", fr: "De même l'Esprit vient nous aider dans notre faiblesse par des soupirs inexprimables." }
+        ];
+
+        // Built-in Reading Plans
+        const defaultPlans = [
+            {
+                id: "plan_saint_esprit",
+                isCustom: false,
+                category: "Pneumatologie",
+                title: "Immersion dans le Saint-Esprit (Pneumatologie)",
+                description: "Découvrez la communion, les dons et la puissance opérante du Paraclet.",
+                durationDays: 7,
+                days: [
+                    { day: 1, title: "La Promesse de l'autre Consolateur", passage: "Jean 14:15-27", focus: "Demeure éternellement avec vous" },
+                    { day: 2, title: "Le Guide dans toute la Vérité", passage: "Jean 16:7-15", focus: "Révèle la gloire de Jésus" },
+                    { day: 3, title: "La Puissance d'en Haut pour être Témoin", passage: "Actes 1:4-8", focus: "Dunamis céleste" },
+                    { day: 4, title: "L'Effusion Souveraine de Pentecôte", passage: "Actes 2:1-21", focus: "Remplis de l'Esprit" },
+                    { day: 5, title: "La Loi de l'Esprit de Vie", passage: "Romains 8:1-17", focus: "Conduits par l'Esprit" },
+                    { day: 6, title: "Le Fruit de l'Esprit contre la chair", passage: "Galates 5:16-26", focus: "Amour, joie, paix" },
+                    { day: 7, title: "Les Dons spirituels pour l'édification", passage: "1 Corinthiens 12:1-11", focus: "Paroles de sagesse, miracles" }
+                ]
+            }
+        ];
+
+        // Navigation Tabs Handling
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.getAttribute('data-tab')).classList.add('active');
+            });
+        });
+
+        // Theme Toggle
+        document.getElementById('toggleThemeBtn').addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            document.documentElement.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+        });
+
+        // Export Data
+        document.getElementById('exportDataBtn').addEventListener('click', () => {
+            const data = { sermons, journal, prayers, teachingMedia, customPlans, completedDays };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ecole_saint_esprit_backup_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+        });
+
+        // Format Textarea Insertion Helper
+        window.insertFormat = function(textareaId, type) {
+            const el = document.getElementById(textareaId);
+            if (!el) return;
+            const start = el.selectionStart;
+            const end = el.selectionEnd;
+            const val = el.value;
+
+            let insertBefore = "";
+            let insertAfter = "";
+
+            switch (type) {
+                case 'bold': insertBefore = "**"; insertAfter = "**"; break;
+                case 'italic': insertBefore = "*"; insertAfter = "*"; break;
+                case 'heading': insertBefore = "\n### "; insertAfter = "\n"; break;
+                case 'bullet': insertBefore = "\n• "; insertAfter = ""; break;
+                case 'quote': insertBefore = "\n> « "; insertAfter = " »\n"; break;
+                case 'cross': insertBefore = " ✝ "; break;
+                case 'star': insertBefore = " ✨ "; break;
+            }
+
+            el.value = val.substring(0, start) + insertBefore + val.substring(start, end) + insertAfter + val.substring(end);
+            el.focus();
+            el.selectionStart = start + insertBefore.length;
+            el.selectionEnd = end + insertBefore.length;
+        };
+
+        // Render Markdown to HTML Helper
+        function formatMarkdown(text) {
+            if (!text) return "";
+            return text
+                .replace(/### (.*?)\n/g, '<h4>$1</h4>')
+                .replace(/> « (.*?) »/g, '<blockquote>« $1 »</blockquote>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/• (.*?)\n/g, '<li>$1</li>')
+                .replace(/\n/g, '<br>');
+        }
+
+        function formatTime(sec) {
+            const m = Math.floor(sec / 60).toString().padStart(2, '0');
+            const s = (sec % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        // ==========================================
+        // AUDIO RECORDING (Microphone API)
+        // ==========================================
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let recordInterval = null;
+        let recordSeconds = 0;
+        let audioContext = null;
+        let analyser = null;
+        let dataArray = null;
+        let animationFrameId = null;
+        let activeRecordedBlobUrl = null;
+
+        const startRecordBtn = document.getElementById('startRecordBtn');
+        const pauseRecordBtn = document.getElementById('pauseRecordBtn');
+        const stopRecordBtn = document.getElementById('stopRecordBtn');
+        const cancelRecordBtn = document.getElementById('cancelRecordBtn');
+        const recordStatusText = document.getElementById('recordStatusText');
+        const recordTimer = document.getElementById('recordTimer');
+        const waveformCanvas = document.getElementById('waveformCanvas');
+        const canvasCtx = waveformCanvas.getContext('2d');
+
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioChunks = [];
+                mediaRecorder = new MediaRecorder(stream);
+                
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContext.createMediaStreamSource(stream);
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 64;
+                source.connect(analyser);
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+                drawWaveform();
+
+                mediaRecorder.ondataavailable = e => {
+                    if (e.data.size > 0) audioChunks.push(e.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                    activeRecordedBlobUrl = URL.createObjectURL(blob);
+                    stream.getTracks().forEach(t => t.stop());
+                    cancelAnimationFrame(animationFrameId);
+                };
+
+                mediaRecorder.start();
+                recordSeconds = 0;
+                recordTimer.innerText = "00:00";
+                recordInterval = setInterval(() => {
+                    recordSeconds++;
+                    recordTimer.innerText = formatTime(recordSeconds);
+                }, 1000);
+
+                recordStatusText.innerText = "🔴 Enregistrement audio en direct...";
+                startRecordBtn.style.display = 'none';
+                pauseRecordBtn.style.display = 'inline-flex';
+                stopRecordBtn.style.display = 'inline-flex';
+                cancelRecordBtn.style.display = 'inline-flex';
+            } catch (err) {
+                alert("Accès microphone refusé : " + err.message);
+            }
+        }
+
+        function drawWaveform() {
+            if (!analyser) return;
+            animationFrameId = requestAnimationFrame(drawWaveform);
+            analyser.getByteFrequencyData(dataArray);
+
+            canvasCtx.fillStyle = '#fee2e2';
+            canvasCtx.fillRect(0, 0, waveformCanvas.width, waveformCanvas.height);
+
+            const barWidth = (waveformCanvas.width / dataArray.length) * 2;
+            let x = 0;
+
+            for (let i = 0; i < dataArray.length; i++) {
+                const barHeight = (dataArray[i] / 255) * waveformCanvas.height;
+                canvasCtx.fillStyle = '#dc2626';
+                canvasCtx.fillRect(x, waveformCanvas.height - barHeight, barWidth - 2, barHeight);
+                x += barWidth;
+            }
+        }
+
+        startRecordBtn.addEventListener('click', startRecording);
+        pauseRecordBtn.addEventListener('click', () => {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.pause();
+                clearInterval(recordInterval);
+                recordStatusText.innerText = "⏸️ Enregistrement en pause";
+                pauseRecordBtn.innerText = "▶️ Reprendre";
+            } else if (mediaRecorder && mediaRecorder.state === 'paused') {
+                mediaRecorder.resume();
+                recordInterval = setInterval(() => {
+                    recordSeconds++;
+                    recordTimer.innerText = formatTime(recordSeconds);
+                }, 1000);
+                recordStatusText.innerText = "🔴 Enregistrement en direct...";
+                pauseRecordBtn.innerText = "⏸️ Pause";
+            }
+        });
+
+        stopRecordBtn.addEventListener('click', () => {
+            if (mediaRecorder) {
+                clearInterval(recordInterval);
+                mediaRecorder.stop();
+                recordStatusText.innerText = "✅ Audio capturé ! Remplissez la note";
+                document.getElementById('sermonModalTitle').innerText = "Enregistrer la Note avec Audio";
+                document.getElementById('sermonTitle').value = "Sermon du " + new Date().toLocaleDateString('fr-FR');
+                document.getElementById('sermonModal').classList.add('active');
+                resetRecordButtons();
+            }
+        });
+
+        cancelRecordBtn.addEventListener('click', () => {
+            if (mediaRecorder) {
+                clearInterval(recordInterval);
+                mediaRecorder.stop();
+                resetRecordButtons();
+                recordStatusText.innerText = "Prêt à enregistrer";
+                recordTimer.innerText = "00:00";
+            }
+        });
+
+        function resetRecordButtons() {
+            startRecordBtn.style.display = 'inline-flex';
+            pauseRecordBtn.style.display = 'none';
+            stopRecordBtn.style.display = 'none';
+            cancelRecordBtn.style.display = 'none';
+            canvasCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
+        }
+
+        // ==========================================
+        // RENDER SERMONS
+        // ==========================================
+        function renderSermons() {
+            const list = document.getElementById('sermonsList');
+            const search = document.getElementById('searchSermonsInput').value.toLowerCase();
+            const activeCat = document.querySelector('#sermonCategoryFilters .chip.active').getAttribute('data-cat');
+
+            const filtered = sermons.filter(s => {
+                const matchesSearch = s.title.toLowerCase().includes(search) ||
+                    s.preacher.toLowerCase().includes(search) ||
+                    s.content.toLowerCase().includes(search) ||
+                    s.scriptureRef.toLowerCase().includes(search);
+                const matchesCat = activeCat === 'TOUS' ? true :
+                    activeCat === 'AUDIO_ONLY' ? Boolean(s.audioBlobUrl) :
+                    s.category === activeCat;
+                return matchesSearch && matchesCat;
+            });
+
+            if (filtered.length === 0) {
+                list.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-muted);"><p style="font-weight: 600;">Aucune note trouvée</p></div>`;
+                return;
+            }
+
+            list.innerHTML = filtered.map(s => `
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <span class="chip" style="background: var(--primary-light); color: var(--primary); font-size: 0.72rem;">${s.category || 'Culte'}</span>
+                            <h3 style="font-size: 1.1rem; margin-top: 4px;">${s.title}</h3>
+                        </div>
+                        <span style="font-size: 0.75rem; background: var(--bg-main); padding: 4px 8px; border-radius: 6px; font-weight: 700; color: var(--primary);">${s.scriptureRef}</span>
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--secondary); margin: 4px 0;">Prédicateur : ${s.preacher || 'Pasteur'} • ${new Date(s.dateMillis).toLocaleDateString()}</p>
+                    <div class="formatted-body" style="margin: 8px 0;">${formatMarkdown(s.content)}</div>
+                    
+                    ${s.keyTakeaways ? `<div style="background: var(--bg-main); padding: 8px; border-radius: 8px; font-size: 0.82rem; margin: 8px 0;"><strong>🎯 Application :</strong><br>${formatMarkdown(s.keyTakeaways)}</div>` : ''}
+
+                    ${s.audioBlobUrl ? `
+                        <div class="audio-player-box">
+                            <span style="font-size: 0.75rem; font-weight: 700; color: var(--primary);">🎙️ Audio du message (${formatTime(s.audioDuration || 0)})</span>
+                            <div class="audio-player-controls">
+                                <audio controls src="${s.audioBlobUrl}" id="audio_${s.id}"></audio>
+                                <div class="speed-buttons">
+                                    <button class="speed-btn" onclick="setSpeed('audio_${s.id}', 1.0)">1x</button>
+                                    <button class="speed-btn" onclick="setSpeed('audio_${s.id}', 1.25)">1.25x</button>
+                                    <button class="speed-btn" onclick="setSpeed('audio_${s.id}', 1.5)">1.5x</button>
+                                    <button class="speed-btn" onclick="setSpeed('audio_${s.id}', 2.0)">2x</button>
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                        <span style="font-size: 0.75rem; color: var(--primary);">#${(s.tags || '').replace(/,/g, ' #')}</span>
+                        <div style="display: flex; gap: 6px;">
+                            <button class="btn btn-outline" style="padding: 4px 8px; font-size: 0.75rem;" onclick="shareSermon(${s.id})">Partager</button>
+                            <button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteSermon(${s.id})">Supprimer</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.setSpeed = function(audioId, speed) {
+            const el = document.getElementById(audioId);
+            if (el) el.playbackRate = speed;
+        };
+
+        window.deleteSermon = function(id) {
+            if (confirm("Supprimer cette note de sermon ?")) {
+                sermons = sermons.filter(s => s.id !== id);
+                localStorage.setItem('es_sermons', JSON.stringify(sermons));
+                renderSermons();
+            }
+        };
+
+        window.shareSermon = function(id) {
+            const s = sermons.find(item => item.id === id);
+            if (!s) return;
+            const text = `Sermon : ${s.title}\nPrédicateur : ${s.preacher}\nPassage : ${s.scriptureRef}\n\n${s.content}\n\nApplication :\n${s.keyTakeaways}`;
+            navigator.clipboard.writeText(text);
+            alert("Note copiée !");
+        };
+
+        // ==========================================
+        // RENDER TWO-WAY JOURNAL
+        // ==========================================
+        const MOOD_DATA = {
+            ZELE: { emoji: '🔥', label: 'Zélé & Enflammé', color: '#ea580c' },
+            RECONNAISSANCE: { emoji: '🙏', label: 'Reconnaissance', color: '#d97706' },
+            PAIX: { emoji: '🕊️', label: 'Paix & Shalom', color: '#0284c7' },
+            COMBAT: { emoji: '⚡', label: 'Combat & Victoire', color: '#7c3aed' },
+            ATTENTE: { emoji: '⏳', label: 'En Attente & Foi', color: '#4f46e5' },
+            EPROUVE: { emoji: '💧', label: 'Besoin de Réconfort', color: '#64748b' },
+            REVELATION: { emoji: '💡', label: 'Révélation & Clarté', color: '#059669' },
+            AMOUR: { emoji: '💖', label: 'Amour & Intimité', color: '#e11d48' }
+        };
+
+        function renderJournal() {
+            const list = document.getElementById('journalList');
+            const search = document.getElementById('searchJournalInput').value.toLowerCase();
+            const activeMood = document.querySelector('#journalMoodFilters .chip.active').getAttribute('data-mood');
+
+            const filtered = journal.filter(j => {
+                const matchesSearch = j.title.toLowerCase().includes(search) ||
+                    j.myPrayer.toLowerCase().includes(search) ||
+                    j.godsResponse.toLowerCase().includes(search);
+                const matchesMood = activeMood === 'TOUS' ? true :
+                    activeMood === 'PERCEE' ? j.isBreakthrough :
+                    j.mood === activeMood;
+                return matchesSearch && matchesMood;
+            });
+
+            if (filtered.length === 0) {
+                list.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-muted);"><p style="font-weight: 600;">Aucun dialogue spirituel trouvé</p></div>`;
+                return;
+            }
+
+            list.innerHTML = filtered.map(j => {
+                const moodInfo = MOOD_DATA[j.mood] || MOOD_DATA.PAIX;
+                return `
+                <div class="card" style="${j.isBreakthrough ? 'border-color: #86efac; background: #f0fdf4;' : ''}">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="font-size: 1.05rem;">${j.title}</h3>
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            ${j.isBreakthrough ? `<span class="mood-badge" style="background: #dcfce7; color: #16a34a;">✨ Percée Confirmée</span>` : ''}
+                            <span class="mood-badge" style="background: ${moodInfo.color}20; color: ${moodInfo.color};">
+                                ${moodInfo.emoji} ${moodInfo.label}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); margin: 6px 0;">
+                        <span>${j.category || 'Intimité'} • Intensité: ${'★'.repeat(j.moodIntensity || 5)}</span>
+                        <span>${new Date(j.dateMillis).toLocaleDateString()}</span>
+                    </div>
+
+                    ${j.scriptureAnchor ? `<div style="font-size: 0.8rem; font-weight: 700; color: var(--primary); margin: 4px 0;">📖 Ancrage : ${j.scriptureAnchor}</div>` : ''}
+
+                    <div class="two-way-grid">
+                        <div class="two-way-box two-way-prayer">
+                            <strong>🙋‍♂️ Ma Prière :</strong>
+                            <div class="formatted-body" style="margin-top: 4px;">${formatMarkdown(j.myPrayer)}</div>
+                        </div>
+                        <div class="two-way-box two-way-god">
+                            <strong>🕊️ La Voix de Dieu :</strong>
+                            <div class="formatted-body" style="margin-top: 4px;">${formatMarkdown(j.godsResponse)}</div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                        <button class="btn btn-outline" style="font-size: 0.75rem; padding: 4px 10px;" onclick="toggleBreakthrough(${j.id})">
+                            ${j.isBreakthrough ? '✓ Percée Validée' : '✨ Dieu a Répondu !'}
+                        </button>
+                        <div style="display: flex; gap: 6px;">
+                            <button class="btn btn-danger" style="font-size: 0.75rem; padding: 4px 8px;" onclick="deleteJournal(${j.id})">Supprimer</button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        window.toggleBreakthrough = function(id) {
+            const item = journal.find(j => j.id === id);
+            if (!item) return;
+            item.isBreakthrough = !item.isBreakthrough;
+            localStorage.setItem('es_journal', JSON.stringify(journal));
+            renderJournal();
+        };
+
+        window.deleteJournal = function(id) {
+            if (confirm("Supprimer ce dialogue ?")) {
+                journal = journal.filter(j => j.id !== id);
+                localStorage.setItem('es_journal', JSON.stringify(journal));
+                renderJournal();
+            }
+        };
+
+        // ==========================================
+        // RENDER CATEGORIZED PRAYERS (NOUVEAU)
+        // ==========================================
+        function renderPrayers() {
+            const list = document.getElementById('prayersList');
+            const search = document.getElementById('searchPrayersInput').value.toLowerCase();
+            const activeCat = document.querySelector('#prayerCategoryFilters .chip.active').getAttribute('data-pcat');
+            const activeStatus = document.querySelector('#prayerStatusFilters .chip.active').getAttribute('data-status');
+
+            const filtered = prayers.filter(p => {
+                const matchesSearch = p.title.toLowerCase().includes(search) ||
+                    p.requestDetails.toLowerCase().includes(search) ||
+                    p.category.toLowerCase().includes(search);
+                const matchesCat = activeCat === 'TOUS' ? true : p.category === activeCat;
+                const matchesStatus = activeStatus === 'TOUS' ? true :
+                    activeStatus === 'EN_ATTENTE' ? !p.isAnswered :
+                    p.isAnswered;
+                return matchesSearch && matchesCat && matchesStatus;
+            });
+
+            if (filtered.length === 0) {
+                list.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-muted);"><p style="font-weight: 600;">Aucun sujet de prière trouvé</p></div>`;
+                return;
+            }
+
+            list.innerHTML = filtered.map(p => `
+                <div class="card" style="${p.isAnswered ? 'border-color: #86efac; background: #f0fdf4;' : ''}">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <span class="chip" style="background: var(--primary-light); color: var(--primary); font-size: 0.72rem;">${p.category}</span>
+                            <h3 style="font-size: 1.05rem; margin-top: 4px;">${p.title}</h3>
+                        </div>
+                        <span class="mood-badge" style="background: ${p.isAnswered ? '#dcfce7' : 'var(--bg-main)'}; color: ${p.isAnswered ? '#16a34a' : 'var(--text-muted)'};">
+                            ${p.isAnswered ? '✓ Exaucée ✨' : '⏳ En attente'}
+                        </span>
+                    </div>
+
+                    <p style="font-size: 0.78rem; color: var(--text-muted); margin: 4px 0;">Déposée le ${new Date(p.dateMillis).toLocaleDateString()} • Priée ${p.prayerCount || 1} fois</p>
+                    <div class="formatted-body" style="margin: 8px 0;">${formatMarkdown(p.requestDetails)}</div>
+
+                    ${p.isAnswered && p.testimony ? `
+                        <div style="background: #fef3c7; border-left: 3px solid var(--accent-gold); padding: 8px 10px; border-radius: 6px; font-size: 0.82rem; margin: 8px 0; color: #78350F;">
+                            <strong>✨ Témoignage d'Exaucement :</strong><br>
+                            ${formatMarkdown(p.testimony)}
+                        </div>
+                    ` : ''}
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                        <div style="display: flex; gap: 6px;">
+                            ${!p.isAnswered ? `
+                                <button class="btn btn-success" style="font-size: 0.75rem; padding: 4px 8px;" onclick="openAnswerModal(${p.id})">✨ Dieu a Exaucé !</button>
+                            ` : ''}
+                            <button class="btn btn-outline" style="font-size: 0.75rem; padding: 4px 8px;" onclick="prayNow(${p.id})">🙏 J'ai prié aujourd'hui</button>
+                        </div>
+                        <button class="btn btn-danger" style="font-size: 0.75rem; padding: 4px 8px;" onclick="deletePrayer(${p.id})">Supprimer</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.prayNow = function(id) {
+            const p = prayers.find(item => item.id === id);
+            if (!p) return;
+            p.prayerCount = (p.prayerCount || 0) + 1;
+            localStorage.setItem('es_prayers', JSON.stringify(prayers));
+            renderPrayers();
+            alert(`Prière enregistrée pour "${p.title}" ! Compteur : ${p.prayerCount} fois.`);
+        };
+
+        window.openAnswerModal = function(id) {
+            const p = prayers.find(item => item.id === id);
+            if (!p) return;
+            document.getElementById('answerPrayerId').value = p.id;
+            document.getElementById('answerPrayerLabel').innerText = `Prière : ${p.title}`;
+            document.getElementById('prayerTestimony').value = "";
+            document.getElementById('prayerAnswerModal').classList.add('active');
+        };
+
+        window.deletePrayer = function(id) {
+            if (confirm("Supprimer cette requête de prière ?")) {
+                prayers = prayers.filter(p => p.id !== id);
+                localStorage.setItem('es_prayers', JSON.stringify(prayers));
+                renderPrayers();
+            }
+        };
+
+        // ==========================================
+        // RENDER E-BOOK READER & TEACHING MEDIA
+        // ==========================================
+        let activeBookIndex = 0;
+        let activeChapterIndex = 0;
+        let readerTheme = "sepia";
+        let readerFontSize = 15;
+
+        function initReader() {
+            const chips = document.getElementById('ebookSelectorChips');
+            chips.innerHTML = studyEBooks.map((b, idx) => `
+                <span class="chip ${idx === activeBookIndex ? 'active' : ''}" onclick="selectBook(${idx})">
+                    ${b.format === 'PDF' ? '📕' : '📗'} ${b.title}
+                </span>
+            `).join('');
+            renderReaderContent();
+        }
+
+        window.selectBook = function(idx) {
+            activeBookIndex = idx;
+            activeChapterIndex = 0;
+            initReader();
+        };
+
+        function renderReaderContent() {
+            const book = studyEBooks[activeBookIndex];
+            const ch = book.chapters[activeChapterIndex] || book.chapters[0];
+            const area = document.getElementById('readerContentArea');
+            document.getElementById('readerChapterIndicator').innerText = `Chapitre ${activeChapterIndex + 1} / ${book.chapters.length}`;
+
+            area.className = `reader-content reader-theme-${readerTheme}`;
+            area.style.fontSize = `${readerFontSize}px`;
+            area.innerHTML = `
+                <div style="font-size: 0.8rem; font-weight: 700; color: var(--primary); margin-bottom: 4px;">${book.title} • ${book.author} (${book.format})</div>
+                <h3 style="font-size: 1.2rem; margin-bottom: 12px;">${ch.title}</h3>
+                <div class="formatted-body">${formatMarkdown(ch.content)}</div>
+            `;
+        }
+
+        document.getElementById('readerPrevBtn').addEventListener('click', () => {
+            if (activeChapterIndex > 0) {
+                activeChapterIndex--;
+                renderReaderContent();
+            }
+        });
+
+        document.getElementById('readerNextBtn').addEventListener('click', () => {
+            const book = studyEBooks[activeBookIndex];
+            if (activeChapterIndex < book.chapters.length - 1) {
+                activeChapterIndex++;
+                renderReaderContent();
+            }
+        });
+
+        document.getElementById('readerThemeLight').addEventListener('click', () => { readerTheme = "light"; renderReaderContent(); });
+        document.getElementById('readerThemeSepia').addEventListener('click', () => { readerTheme = "sepia"; renderReaderContent(); });
+        document.getElementById('readerThemeDark').addEventListener('click', () => { readerTheme = "dark"; renderReaderContent(); });
+
+        document.getElementById('readerFontDec').addEventListener('click', () => {
+            if (readerFontSize > 12) {
+                readerFontSize -= 2;
+                document.getElementById('readerFontSizeLabel').innerText = `${readerFontSize} pt`;
+                renderReaderContent();
+            }
+        });
+
+        document.getElementById('readerFontInc').addEventListener('click', () => {
+            if (readerFontSize < 24) {
+                readerFontSize += 2;
+                document.getElementById('readerFontSizeLabel').innerText = `${readerFontSize} pt`;
+                renderReaderContent();
+            }
+        });
+
+        // Local Document Picker
+        document.getElementById('localDocumentPicker').addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (file) {
+                studyEBooks.unshift({
+                    id: `local_${Date.now()}`,
+                    title: file.name,
+                    author: "Document Importé",
+                    format: file.name.endsWith('.epub') ? 'EPUB' : 'PDF',
+                    category: "Étude Personnelle",
+                    chapters: [
+                        {
+                            title: `Lecture de ${file.name}`,
+                            content: `### Document chargé avec succès !\nFichier : **${file.name}** (${(file.size / 1024).toFixed(1)} Ko).\n\n• Document d'étude prêt pour la méditation.\n• Vous pouvez annoter vos réflexions dans les Notes de Sermon ou le Two-Way Journal.`
+                        }
+                    ]
+                });
+                activeBookIndex = 0;
+                activeChapterIndex = 0;
+                initReader();
+                alert(`Document "${file.name}" ouvert dans le lecteur !`);
+            }
+        });
+
+        // Render Teaching Media
+        function renderTeachingMedia() {
+            const list = document.getElementById('teachingMediaList');
+            const activeType = document.querySelector('#mediaTypeChips .chip.active').getAttribute('data-mtype');
+
+            const filtered = teachingMedia.filter(m => activeType === 'TOUS' ? true : m.mediaType === activeType);
+
+            list.innerHTML = filtered.map(m => `
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <span class="chip" style="background: ${m.mediaType === 'VIDEO' ? '#fee2e2' : '#e0e7ff'}; color: ${m.mediaType === 'VIDEO' ? '#dc2626' : '#4338ca'}; font-size: 0.72rem;">
+                                ${m.mediaType === 'VIDEO' ? '🎬 Vidéo' : '🎙️ Audio'} • ${m.category}
+                            </span>
+                            <h3 style="font-size: 1.05rem; margin-top: 4px;">${m.title}</h3>
+                            <p style="font-size: 0.8rem; color: var(--secondary);">${m.teacher} • Durée : ${m.durationText}</p>
+                        </div>
+                    </div>
+                    <div class="formatted-body" style="margin: 8px 0;">${formatMarkdown(m.description)}</div>
+
+                    ${m.mediaType === 'AUDIO' ? `
+                        <div class="audio-player-box">
+                            <span style="font-size: 0.75rem; font-weight: 700; color: var(--primary);">🎙️ Écoute Podcast Audio (${m.durationText})</span>
+                            <div class="audio-player-controls">
+                                <audio controls src="${m.mediaUrl}"></audio>
+                            </div>
+                        </div>
+                    ` : `
+                        <a href="${m.mediaUrl}" target="_blank" class="btn btn-danger" style="text-decoration: none; font-size: 0.78rem; margin-top: 6px;">
+                            🎬 Ouvrir la Vidéo d'Enseignement ↗
+                        </a>
+                    `}
+                </div>
+            `).join('');
+        }
+
+        // Subtabs library switch
+        document.querySelectorAll('#librarySubTabs .chip').forEach(c => {
+            c.addEventListener('click', () => {
+                document.querySelectorAll('#librarySubTabs .chip').forEach(x => x.classList.remove('active'));
+                c.classList.add('active');
+                const tab = c.getAttribute('data-libtab');
+                if (tab === 'reader') {
+                    document.getElementById('libraryReaderSection').style.display = 'block';
+                    document.getElementById('libraryMediaSection').style.display = 'none';
+                } else {
+                    document.getElementById('libraryReaderSection').style.display = 'none';
+                    document.getElementById('libraryMediaSection').style.display = 'block';
+                    renderTeachingMedia();
+                }
+            });
+        });
+
+        // ==========================================
+        // RENDER READING PLANS
+        // ==========================================
+        function renderPlans() {
+            const list = document.getElementById('plansList');
+            const activeFilter = document.querySelector('#planCategoryFilters .chip.active').getAttribute('data-pcat');
+
+            const allPlans = [...customPlans, ...defaultPlans];
+            const filtered = allPlans.filter(p => {
+                if (activeFilter === 'TOUS') return true;
+                if (activeFilter === 'MES_PLANS') return p.isCustom;
+                return p.category === activeFilter;
+            });
+
+            list.innerHTML = filtered.map(p => {
+                const totalDays = p.days.length;
+                const completed = p.days.filter(d => completedDays.includes(`${p.id}_day_${d.day}`)).length;
+                const progressPct = Math.round((completed / totalDays) * 100);
+
+                return `
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <span class="chip" style="background: ${p.isCustom ? '#dcfce7' : 'var(--primary-light)'}; color: ${p.isCustom ? '#16a34a' : 'var(--primary)'}; font-size: 0.72rem;">
+                                ${p.category} ${p.isCustom ? '• PERSONNALISÉ' : ''}
+                            </span>
+                            <h3 style="font-size: 1.1rem; margin-top: 4px;">${p.title}</h3>
+                        </div>
+                        ${p.isCustom ? `<button class="btn btn-danger" style="padding: 2px 6px; font-size: 0.72rem;" onclick="deleteCustomPlan('${p.id}')">✕</button>` : ''}
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 6px 0;">${p.description}</p>
+                    
+                    <div style="margin: 10px 0;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700; color: var(--primary);">
+                            <span>${completed} / ${totalDays} jours validés</span>
+                            <span>${progressPct}%</span>
+                        </div>
+                        <div style="background: var(--border); height: 6px; border-radius: 3px; overflow: hidden; margin-top: 4px;">
+                            <div style="background: var(--primary); height: 100%; width: ${progressPct}%;"></div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 10px;">
+                        ${p.days.map(d => {
+                            const isDone = completedDays.includes(`${p.id}_day_${d.day}`);
+                            return `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; background: var(--bg-main); border-radius: 8px; font-size: 0.82rem;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" ${isDone ? 'checked' : ''} onchange="togglePlanDay('${p.id}', ${d.day})">
+                                    <span><strong>Jour ${d.day} :</strong> ${d.title} (${d.passage})</span>
+                                </div>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">🎯 ${d.focus}</span>
+                            </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        window.togglePlanDay = function(planId, day) {
+            const key = `${planId}_day_${day}`;
+            if (completedDays.includes(key)) {
+                completedDays = completedDays.filter(k => k !== key);
+            } else {
+                completedDays.push(key);
+            }
+            localStorage.setItem('es_completed_days', JSON.stringify(completedDays));
+            renderPlans();
+        };
+
+        window.deleteCustomPlan = function(planId) {
+            if (confirm("Supprimer ce plan ?")) {
+                customPlans = customPlans.filter(p => p.id !== planId);
+                localStorage.setItem('es_custom_plans', JSON.stringify(customPlans));
+                renderPlans();
+            }
+        };
+
+        // ==========================================
+        // RENDER BIBLE
+        // ==========================================
+        let isParallel = false;
+        function renderBible() {
+            const book = document.getElementById('bibleBookSelect').value;
+            const chapter = parseInt(document.getElementById('bibleChapterSelect').value, 10);
+            const container = document.getElementById('bibleVersesContainer');
+
+            const verses = bibleVerses.filter(v => v.book === book && v.chapter === chapter);
+
+            if (verses.length === 0) {
+                container.innerHTML = `<p style="padding: 20px; color: var(--text-muted);">Aucun verset disponible.</p>`;
+                return;
+            }
+
+            container.innerHTML = verses.map(v => `
+                <div class="card" style="padding: 12px;">
+                    <div style="font-weight: 800; color: var(--primary); font-size: 0.85rem; margin-bottom: 4px;">${v.book} ${v.chapter}:${v.verse}</div>
+                    ${isParallel ? `
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div>
+                                <small style="color: var(--secondary); font-weight: 700;">🇲🇬 BAIBOLY MALAGASY</small>
+                                <p style="font-size: 0.92rem; line-height: 1.5; margin-top: 2px;">${v.mg}</p>
+                            </div>
+                            <div>
+                                <small style="color: var(--primary); font-weight: 700;">🇫🇷 FRANÇAIS SEMEUR</small>
+                                <p style="font-size: 0.92rem; line-height: 1.5; margin-top: 2px;">${v.fr}</p>
+                            </div>
+                        </div>
+                    ` : `
+                        <p style="font-size: 0.95rem; line-height: 1.5;">${v.fr}</p>
+                        <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 4px;">🇲🇬 ${v.mg}</p>
+                    `}
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('toggleParallelBibleBtn').addEventListener('click', () => {
+            isParallel = !isParallel;
+            renderBible();
+        });
+
+        // ==========================================
+        // MODALS HANDLING
+        // ==========================================
+        window.closeModals = function() {
+            document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+        };
+
+        document.getElementById('openNewSermonModalBtn').addEventListener('click', () => {
+            document.getElementById('sermonForm').reset();
+            document.getElementById('sermonModalTitle').innerText = "Nouvelle Note de Sermon";
+            document.getElementById('sermonModal').classList.add('active');
+        });
+
+        document.getElementById('sermonForm').addEventListener('submit', e => {
+            e.preventDefault();
+            sermons.unshift({
+                id: Date.now(),
+                title: document.getElementById('sermonTitle').value,
+                preacher: document.getElementById('sermonPreacher').value || 'Pasteur',
+                category: document.getElementById('sermonCategory').value || 'Culte Dominical',
+                scriptureRef: document.getElementById('sermonScripture').value || 'Jean 14',
+                content: document.getElementById('sermonContent').value,
+                keyTakeaways: document.getElementById('sermonTakeaways').value,
+                tags: document.getElementById('sermonTags').value || 'SaintEsprit',
+                dateMillis: Date.now(),
+                audioBlobUrl: activeRecordedBlobUrl,
+                audioDuration: recordSeconds
+            });
+            localStorage.setItem('es_sermons', JSON.stringify(sermons));
+            activeRecordedBlobUrl = null;
+            closeModals();
+            renderSermons();
+        });
+
+        document.getElementById('openNewJournalModalBtn').addEventListener('click', () => {
+            document.getElementById('journalForm').reset();
+            document.getElementById('journalModal').classList.add('active');
+        });
+
+        document.getElementById('journalForm').addEventListener('submit', e => {
+            e.preventDefault();
+            journal.unshift({
+                id: Date.now(),
+                title: document.getElementById('journalTitle').value,
+                mood: document.getElementById('journalMood').value,
+                moodIntensity: parseInt(document.getElementById('journalIntensity').value, 10),
+                category: document.getElementById('journalCategory').value || 'Intimité & Adoration',
+                scriptureAnchor: document.getElementById('journalScripture').value,
+                myPrayer: document.getElementById('journalMyPrayer').value,
+                godsResponse: document.getElementById('journalGodsResponse').value,
+                isBreakthrough: false,
+                dateMillis: Date.now()
+            });
+            localStorage.setItem('es_journal', JSON.stringify(journal));
+            closeModals();
+            renderJournal();
+        });
+
+        document.getElementById('openNewPrayerModalBtn').addEventListener('click', () => {
+            document.getElementById('prayerForm').reset();
+            document.getElementById('prayerModal').classList.add('active');
+        });
+
+        document.getElementById('prayerForm').addEventListener('submit', e => {
+            e.preventDefault();
+            prayers.unshift({
+                id: Date.now(),
+                title: document.getElementById('prayerTitle').value,
+                category: document.getElementById('prayerCategory').value,
+                requestDetails: document.getElementById('prayerDetails').value,
+                isAnswered: false,
+                answeredDateMillis: null,
+                testimony: "",
+                prayerCount: 1,
+                dateMillis: Date.now()
+            });
+            localStorage.setItem('es_prayers', JSON.stringify(prayers));
+            closeModals();
+            renderPrayers();
+        });
+
+        document.getElementById('prayerAnswerForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('answerPrayerId').value, 10);
+            const p = prayers.find(item => item.id === id);
+            if (p) {
+                p.isAnswered = true;
+                p.answeredDateMillis = Date.now();
+                p.testimony = document.getElementById('prayerTestimony').value;
+                localStorage.setItem('es_prayers', JSON.stringify(prayers));
+                closeModals();
+                renderPrayers();
+                alert("✨ Alléluia ! Témoignage d'exaucement enregistré avec succès !");
+            }
+        });
+
+        document.getElementById('openNewMediaModalBtn').addEventListener('click', () => {
+            document.getElementById('mediaForm').reset();
+            document.getElementById('mediaModal').classList.add('active');
+        });
+
+        document.getElementById('mediaForm').addEventListener('submit', e => {
+            e.preventDefault();
+            teachingMedia.unshift({
+                id: `m_${Date.now()}`,
+                title: document.getElementById('mediaTitle').value,
+                teacher: document.getElementById('mediaTeacher').value || 'Enseignant',
+                mediaType: document.getElementById('mediaType').value,
+                mediaUrl: document.getElementById('mediaUrl').value,
+                category: document.getElementById('mediaCategory').value || 'Pneumatologie',
+                durationText: document.getElementById('mediaDuration').value || '30 min',
+                description: document.getElementById('mediaDesc').value
+            });
+            localStorage.setItem('es_teaching_media', JSON.stringify(teachingMedia));
+            closeModals();
+            renderTeachingMedia();
+        });
+
+        document.getElementById('openNewPlanModalBtn').addEventListener('click', () => {
+            document.getElementById('planForm').reset();
+            updatePlanDaysFields(7);
+            document.getElementById('planModal').classList.add('active');
+        });
+
+        document.getElementById('planDaysSelect').addEventListener('change', e => {
+            updatePlanDaysFields(parseInt(e.target.value, 10));
+        });
+
+        function updatePlanDaysFields(count) {
+            const container = document.getElementById('planDaysFieldsContainer');
+            container.innerHTML = '';
+            for (let i = 1; i <= count; i++) {
+                container.innerHTML += `
+                    <div style="background: var(--bg-main); padding: 6px; border-radius: 6px; font-size: 0.78rem;">
+                        <strong>Jour ${i} :</strong>
+                        <div style="display: flex; gap: 4px; margin-top: 3px;">
+                            <input type="text" class="form-control" id="pday_title_${i}" value="Jour ${i} : Méditation" style="flex: 1;">
+                            <input type="text" class="form-control" id="pday_pass_${i}" value="Jean 14" style="flex: 1;">
+                            <input type="text" class="form-control" id="pday_focus_${i}" value="Écoute de l'Esprit" style="flex: 1;">
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        document.getElementById('planForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const daysCount = parseInt(document.getElementById('planDaysSelect').value, 10);
+            const days = [];
+            for (let i = 1; i <= daysCount; i++) {
+                days.push({
+                    day: i,
+                    title: document.getElementById(`pday_title_${i}`).value,
+                    passage: document.getElementById(`pday_pass_${i}`).value,
+                    focus: document.getElementById(`pday_focus_${i}`).value
+                });
+            }
+            customPlans.unshift({
+                id: `custom_${Date.now()}`,
+                isCustom: true,
+                title: document.getElementById('planTitle').value,
+                category: document.getElementById('planCategory').value,
+                description: document.getElementById('planDesc').value,
+                durationDays: daysCount,
+                days: days
+            });
+            localStorage.setItem('es_custom_plans', JSON.stringify(customPlans));
+            closeModals();
+            renderPlans();
+        });
+
+        // Event listeners for filters
+        document.querySelectorAll('#sermonCategoryFilters .chip').forEach(c => {
+            c.addEventListener('click', () => {
+                document.querySelectorAll('#sermonCategoryFilters .chip').forEach(x => x.classList.remove('active'));
+                c.classList.add('active');
+                renderSermons();
+            });
+        });
+
+        document.querySelectorAll('#journalMoodFilters .chip').forEach(c => {
+            c.addEventListener('click', () => {
+                document.querySelectorAll('#journalMoodFilters .chip').forEach(x => x.classList.remove('active'));
+                c.classList.add('active');
+                renderJournal();
+            });
+        });
+
+        document.querySelectorAll('#prayerCategoryFilters .chip').forEach(c => {
+            c.addEventListener('click', () => {
+                document.querySelectorAll('#prayerCategoryFilters .chip').forEach(x => x.classList.remove('active'));
+                c.classList.add('active');
+                renderPrayers();
+            });
+        });
+
+        document.querySelectorAll('#prayerStatusFilters .chip').forEach(c => {
+            c.addEventListener('click', () => {
+                document.querySelectorAll('#prayerStatusFilters .chip').forEach(x => x.classList.remove('active'));
+                c.classList.add('active');
+                renderPrayers();
+            });
+        });
+
+        document.querySelectorAll('#planCategoryFilters .chip').forEach(c => {
+            c.addEventListener('click', () => {
+                document.querySelectorAll('#planCategoryFilters .chip').forEach(x => x.classList.remove('active'));
+                c.classList.add('active');
+                renderPlans();
+            });
+        });
+
+        document.querySelectorAll('#mediaTypeChips .chip').forEach(c => {
+            c.addEventListener('click', () => {
+                document.querySelectorAll('#mediaTypeChips .chip').forEach(x => x.classList.remove('active'));
+                c.classList.add('active');
+                renderTeachingMedia();
+            });
+        });
+
+        document.getElementById('searchSermonsInput').addEventListener('input', renderSermons);
+        document.getElementById('searchJournalInput').addEventListener('input', renderJournal);
+        document.getElementById('searchPrayersInput').addEventListener('input', renderPrayers);
+
+        // Populate Bible dropdowns
+        const books = [...new Set(bibleVerses.map(v => v.book))];
+        const bookSel = document.getElementById('bibleBookSelect');
+        bookSel.innerHTML = books.map(b => `<option value="${b}">${b}</option>`).join('');
+
+        function updateBibleChapters() {
+            const b = bookSel.value;
+            const chapters = [...new Set(bibleVerses.filter(v => v.book === b).map(v => v.chapter))];
+            const chSel = document.getElementById('bibleChapterSelect');
+            chSel.innerHTML = chapters.map(c => `<option value="${c}">Chapitre ${c}</option>`).join('');
+            renderBible();
+        }
+
+        bookSel.addEventListener('change', updateBibleChapters);
+        document.getElementById('bibleChapterSelect').addEventListener('change', renderBible);
+
+        // Initial setup
+        updateBibleChapters();
+        renderSermons();
+        renderJournal();
+        renderPrayers();
+        initReader();
+        renderPlans();
+    </script>
+</body>
+</html>

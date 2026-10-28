@@ -1,0 +1,6 @@
+{
+  "name": "École du Saint Esprit",
+  "description": "Application d'étude biblique, notes de sermon, homilétique, bibliothèque théologique, déclarations de foi, prières et Bibles multi-versions (Malagasy, Semeur, Amplified).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
